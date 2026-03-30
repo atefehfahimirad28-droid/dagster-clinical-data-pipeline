@@ -1,0 +1,36 @@
+visit_id,patient_id,department,admission_date,discharge_date,diagnosis_code,attending_physician,visit_type,status
+V001,P001,Cardiology,2024-01-05,2024-01-09,I21,Dr. Weiss,inpatient,completed
+V002,P001,Cardiology,2024-01-28,2024-01-30,I25,Dr. Weiss,inpatient,completed
+V003,P002,Emergency,2024-01-10,2024-01-10,S72,Dr. Klein,emergency,completed
+V004,P002,Orthopedics,2024-01-11,2024-01-18,S72,Dr. Bauer,inpatient,completed
+V005,P003,Internal Medicine,2024-01-15,2024-01-19,E11,Dr. Neumann,inpatient,completed
+V006,P004,Neurology,2024-01-20,2024-01-28,G20,Dr. Schwarz,inpatient,completed
+V007,P004,Neurology,2024-02-10,2024-02-14,G20,Dr. Schwarz,inpatient,completed
+V008,P005,Emergency,2024-02-01,2024-02-01,J18,Dr. Klein,emergency,completed
+V009,P005,Internal Medicine,2024-02-02,2024-02-08,J18,Dr. Neumann,inpatient,completed
+V010,P006,Cardiology,2024-02-10,2024-02-15,I10,Dr. Weiss,inpatient,completed
+V011,P007,Emergency,2024-02-14,2024-02-14,S52,Dr. Klein,emergency,completed
+V012,P008,Internal Medicine,2024-02-20,2024-02-27,K21,Dr. Neumann,inpatient,completed
+V013,P008,Internal Medicine,2024-03-10,2024-03-14,K21,Dr. Neumann,inpatient,completed
+V014,P009,Cardiology,2024-03-01,2024-03-05,I48,Dr. Weiss,inpatient,completed
+V015,P010,Orthopedics,2024-03-05,2024-03-12,M54,Dr. Bauer,inpatient,completed
+V016,P011,Emergency,2024-03-10,2024-03-10,T78,Dr. Klein,emergency,completed
+V017,P012,Neurology,2024-03-15,2024-03-22,G43,Dr. Schwarz,inpatient,completed
+V018,P013,Internal Medicine,2024-03-20,2024-03-24,E78,Dr. Neumann,inpatient,completed
+V019,P014,Cardiology,2024-04-01,2024-04-06,I10,Dr. Weiss,inpatient,completed
+V020,P014,Cardiology,2024-04-20,2024-04-23,I10,Dr. Weiss,inpatient,completed
+V021,P015,Emergency,2024-04-05,2024-04-05,R10,Dr. Klein,emergency,completed
+V022,P015,Internal Medicine,2024-04-06,2024-04-10,K35,Dr. Neumann,inpatient,completed
+V023,P016,Neurology,2024-04-10,2024-04-18,I63,Dr. Schwarz,inpatient,completed
+V024,P016,Neurology,2024-04-30,2024-05-04,I63,Dr. Schwarz,inpatient,completed
+V025,P017,Orthopedics,2024-04-15,2024-04-20,M17,Dr. Bauer,inpatient,completed
+V026,P001,Internal Medicine,2024-05-01,2024-05-04,E11,Dr. Neumann,inpatient,completed
+V027,P003,Internal Medicine,2024-05-10,2024-05-13,E11,Dr. Neumann,inpatient,completed
+V028,P006,Cardiology,2024-05-15,2024-05-19,I25,Dr. Weiss,inpatient,completed
+V029,P009,Emergency,2024-05-20,2024-05-20,R55,Dr. Klein,emergency,completed
+V030,P011,Orthopedics,2024-05-25,2024-05-30,S82,Dr. Bauer,inpatient,completed
+V031,P002,Emergency,2024-06-01,2024-06-01,R10,Dr. Klein,emergency,completed
+V032,P004,Neurology,2024-06-05,2024-06-10,G20,Dr. Schwarz,inpatient,completed
+V033,P007,Internal Medicine,2024-06-10,2024-06-14,J45,Dr. Neumann,inpatient,completed
+V034,P010,Orthopedics,2024-06-15,2024-06-20,M54,Dr. Bauer,inpatient,completed
+V035,P012,Cardiology,2024-06-20,2024-06-24,I10,Dr. Weiss,inpatient,completed

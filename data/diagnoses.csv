@@ -1,0 +1,22 @@
+diagnosis_code,description,category,severity_level
+I21,Acute myocardial infarction,Cardiovascular,5
+I25,Chronic ischemic heart disease,Cardiovascular,3
+I10,Essential hypertension,Cardiovascular,2
+I48,Atrial fibrillation and flutter,Cardiovascular,3
+I63,Cerebral infarction,Neurological,5
+S72,Fracture of femur,Trauma,4
+S52,Fracture of forearm,Trauma,3
+S82,Fracture of lower leg,Trauma,3
+E11,Type 2 diabetes mellitus,Endocrine,3
+E78,Disorders of lipoprotein metabolism,Endocrine,2
+G20,Parkinson disease,Neurological,4
+G43,Migraine,Neurological,2
+J18,Pneumonia unspecified organism,Respiratory,4
+J45,Asthma,Respiratory,2
+K21,Gastro-oesophageal reflux disease,Digestive,2
+K35,Acute appendicitis,Digestive,4
+M54,Dorsalgia,Musculoskeletal,2
+M17,Gonarthrosis,Musculoskeletal,3
+T78,Adverse effects not elsewhere classified,Other,3
+R10,Abdominal and pelvic pain,Symptoms,2
+R55,Syncope and collapse,Symptoms,3

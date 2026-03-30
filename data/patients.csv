@@ -1,0 +1,18 @@
+patient_id,first_name,last_name,date_of_birth,gender,blood_type,insurance_type,registered_at
+P001,Hannah,Becker,1958-03-15,Female,A+,Public,2023-01-10 08:30:00
+P002,Jonas,Schneider,1972-07-22,Male,O+,Private,2023-01-12 09:15:00
+P003,Lena,Wagner,1985-11-03,Female,B+,Public,2023-02-01 10:00:00
+P004,Felix,Hoffmann,1945-06-18,Male,AB-,Public,2023-02-14 11:30:00
+P005,Sofia,Martinez,1990-09-27,Female,O-,Private,2023-03-05 08:45:00
+P006,Markus,Braun,1968-01-30,Male,A-,Public,2023-03-10 14:00:00
+P007,Mia,Richter,1995-04-12,Female,B-,Private,2023-03-20 09:30:00
+P008,Werner,Schulz,1952-12-08,Male,O+,Public,2023-04-01 10:15:00
+P009,Emma,Becker,1980-08-19,Female,A+,Public,2023-04-15 11:00:00
+P010,Friedrich,Wagner,1963-05-25,Male,AB+,Private,2023-05-02 08:00:00
+P011,Lea,Zimmermann,1998-02-14,Female,O+,Public,2023-05-10 13:30:00
+P012,Otto,Krause,1955-10-31,Male,B+,Public,2023-06-01 09:00:00
+P013,Elif,Yilmaz,1987-07-07,Female,A+,Private,2023-06-15 10:45:00
+P014,Peter,Lang,1970-03-20,Male,O-,Public,2023-07-01 08:30:00
+P015,Clara,Richter,1992-11-28,Female,AB+,Private,2023-07-10 14:15:00
+P016,Georg,Hartmann,1948-09-05,Male,A-,Public,2023-08-01 09:00:00
+P017,Yuki,Tanaka,1983-06-12,Female,B+,Private,2023-08-15 11:30:00

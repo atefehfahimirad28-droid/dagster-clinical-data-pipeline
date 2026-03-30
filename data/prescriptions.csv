@@ -1,0 +1,25 @@
+prescription_id,visit_id,patient_id,medication_name,dosage,frequency,start_date,end_date,prescribing_physician
+RX001,V001,P001,Aspirin,100mg,daily,2024-01-05,2024-07-05,Dr. Weiss
+RX002,V001,P001,Metoprolol,50mg,twice daily,2024-01-05,2024-04-05,Dr. Weiss
+RX003,V002,P001,Atorvastatin,20mg,daily,2024-01-28,,Dr. Weiss
+RX004,V004,P002,Ibuprofen,400mg,three times daily,2024-01-11,2024-02-11,Dr. Bauer
+RX005,V004,P002,Calcium supplement,500mg,daily,2024-01-11,2024-04-11,Dr. Bauer
+RX006,V005,P003,Metformin,850mg,twice daily,2024-01-15,,Dr. Neumann
+RX007,V006,P004,Levodopa,250mg,three times daily,2024-01-20,,Dr. Schwarz
+RX008,V006,P004,Carbidopa,25mg,three times daily,2024-01-20,,Dr. Schwarz
+RX009,V009,P005,Amoxicillin,500mg,three times daily,2024-02-02,2024-02-12,Dr. Neumann
+RX010,V010,P006,Lisinopril,10mg,daily,2024-02-10,,Dr. Weiss
+RX011,V010,P006,Amlodipine,5mg,daily,2024-02-10,,Dr. Weiss
+RX012,V012,P008,Omeprazole,20mg,daily,2024-02-20,2024-05-20,Dr. Neumann
+RX013,V014,P009,Warfarin,5mg,daily,2024-03-01,,Dr. Weiss
+RX014,V015,P010,Diclofenac,50mg,twice daily,2024-03-05,2024-04-05,Dr. Bauer
+RX015,V017,P012,Sumatriptan,50mg,as needed,2024-03-15,2024-06-15,Dr. Schwarz
+RX016,V018,P013,Atorvastatin,10mg,daily,2024-03-20,,Dr. Neumann
+RX017,V019,P014,Amlodipine,10mg,daily,2024-04-01,,Dr. Weiss
+RX018,V022,P015,Paracetamol,500mg,four times daily,2024-04-06,2024-04-16,Dr. Neumann
+RX019,V023,P016,Clopidogrel,75mg,daily,2024-04-10,,Dr. Schwarz
+RX020,V025,P017,Celecoxib,200mg,daily,2024-04-15,2024-07-15,Dr. Bauer
+RX021,V026,P001,Metformin,500mg,twice daily,2024-05-01,,Dr. Neumann
+RX022,V028,P006,Atorvastatin,20mg,daily,2024-05-15,,Dr. Weiss
+RX023,V033,P007,Salbutamol inhaler,100mcg,as needed,2024-06-10,,Dr. Neumann
+RX024,V035,P012,Lisinopril,5mg,daily,2024-06-20,,Dr. Weiss
