@@ -90,7 +90,7 @@ This starts PostgreSQL 17 with the `clinicflow` database and schema pre-created.
 
 ```bash
 cd clinicflow
-uv sync --dev
+uv sync
 ```
 
 ### 3. Run tests (TDD)

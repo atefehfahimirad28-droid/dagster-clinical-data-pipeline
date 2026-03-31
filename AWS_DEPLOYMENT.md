@@ -145,7 +145,7 @@ git clone <your-repo-url> clinicflow-project
 cd clinicflow-project/clinicflow
 
 # Install dependencies
-uv sync --dev
+uv sync
 ```
 
 ## Step 5: Configure Environment Variables

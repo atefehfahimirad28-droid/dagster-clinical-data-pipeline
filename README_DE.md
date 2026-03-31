@@ -96,7 +96,7 @@ Schema (simuliert das klinische Data Warehouse der Charite).
 
 ```bash
 cd clinicflow
-uv sync --dev
+uv sync
 ```
 
 ### 3. Tests ausfuehren (TDD)
