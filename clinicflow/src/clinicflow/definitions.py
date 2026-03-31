@@ -1,13 +1,7 @@
-"""Dagster definitions entry point for Charite Clinical Analytics Pipeline.
+"""Dagster definitions entry point for Charite Clinical Analytics Pipeline."""
 
-German: Dagster-Definitionen als Einstiegspunkt fuer die klinische
-Analyse-Pipeline der Charite.
-"""
+from dagster import load_defs
 
-import dagster as dg
+import clinicflow.defs as defs_module
 
-defs = dg.Definitions.merge(
-    *dg.load_defs_from_package(
-        "clinicflow.defs",
-    ),
-)
+defs = load_defs(defs_module)
