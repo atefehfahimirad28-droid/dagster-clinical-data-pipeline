@@ -114,7 +114,7 @@ implementieren, damit die Tests bestehen.
 dg dev
 ```
 
-Oeffnen Sie [http://localhost:3000](http://localhost:3000), um die Dagit-Oberflaeche
+Oeffnen Sie [http://localhost:3000](http://localhost:3000), um die Dagster-Benutzeroberflaeche
 anzuzeigen.
 
 ## Aufgabenaufteilung
@@ -197,16 +197,16 @@ Beispiel-Branch-Namen: `feature/postgres-resource`, `feature/raw-ingestion`,
 ## Erwartete Ergebnisse
 
 1. Alle Tests bestanden (`uv run pytest tests/ -v`)
-2. Vollstaendiger Asset-Graph sichtbar in der Dagit-Oberflaeche
+2. Vollstaendiger Asset-Graph sichtbar in der Dagster-Benutzeroberflaeche
 3. Erfolgreiche Materialisierung aller Assets gegen die Docker-PostgreSQL-Instanz
-4. Woechentlicher Zeitplan registriert und sichtbar in Dagit
+4. Woechentlicher Zeitplan registriert und sichtbar in Dagster User Interface
 
 ## Bewertungskriterien
 
 | Kriterium | Gewichtung |
 |-----------|------------|
 | Alle 12 Tests bestanden | 30% |
-| Assets materialisieren fehlerfrei in Dagit | 25% |
+| Assets materialisieren fehlerfrei in Dagster User Interface | 25% |
 | Korrekte Asset-Abhaengigkeiten (Graphstruktur) | 15% |
 | Wiederaufnahme-Erkennungslogik ist korrekt | 15% |
 | Zeitplan und Jobs korrekt konfiguriert | 10% |

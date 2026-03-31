@@ -105,7 +105,7 @@ aws ec2 create-security-group \
   --group-name clinicflow-ec2-sg \
   --description "ClinicFlow EC2"
 
-# Allow SSH and Dagit UI access
+# Allow SSH and Dagster User Interface access
 aws ec2 authorize-security-group-ingress \
   --group-name clinicflow-ec2-sg \
   --protocol tcp --port 22 --cidr 0.0.0.0/0
@@ -173,7 +173,7 @@ EOF
 DAGSTER_HOME=~/dagster_home dg dev --host 0.0.0.0 --port 3000
 ```
 
-Access Dagit at `http://<EC2-PUBLIC-IP>:3000`.
+Access Dagster User Interface at `http://<EC2-PUBLIC-IP>:3000`.
 
 ## Step 7: Tear Down (Important!)
 

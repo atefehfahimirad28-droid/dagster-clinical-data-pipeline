@@ -15,7 +15,7 @@ This project follows an agile workflow. Each team is expected to:
 
 - **Sprint Planning (Day 1 of each sprint):** Review the backlog, select user stories for the sprint, assign story owners, and break stories into tasks if needed.
 - **Daily Standups (15 min max):** Each team member answers: What did I do yesterday? What will I do today? Are there any blockers?
-- **Sprint Review (last day of each sprint):** Demo completed work to the instructor/stakeholders. Show working software (Dagit UI, passing tests, CI pipeline).
+- **Sprint Review (last day of each sprint):** Demo completed work to the instructor/stakeholders. Show working software (Dagster User Interface, passing tests, CI pipeline).
 - **Sprint Retrospective (after review):** Discuss what went well, what could improve, and agree on one concrete action item for the next sprint.
 
 Use a project board (GitHub Projects, Trello, or similar) to track story status: **To Do**, **In Progress**, **In Review**, **Done**.
@@ -275,7 +275,7 @@ Rules:
 - [ ] `readmission_screening_job` is defined and selects only readmission + patient summary assets
 - [ ] `weekly_analytics_schedule` is defined in `src/clinicflow/defs/schedules.py`
 - [ ] Schedule triggers `weekly_analytics_job` with a cron expression for every Monday at 07:00 (`0 7 * * 1`)
-- [ ] Schedule is visible and registered in the Dagit UI
+- [ ] Schedule is visible and registered in the Dagster User Interface
 - [ ] Corresponding tests pass
 
 **Story Points:** 3 (medium)
@@ -284,15 +284,15 @@ Rules:
 
 ---
 
-### US-10: End-to-End Pipeline Test in Dagit
+### US-10: End-to-End Pipeline Test in Dagster User Interface
 
 **As a** team,
-**I want** to verify that the entire pipeline works end-to-end in Dagit,
+**I want** to verify that the entire pipeline works end-to-end in Dagster User Interface,
 **So that** we can confidently demo and deliver a working system.
 
 **Acceptance Criteria:**
-- [ ] All assets can be materialized in sequence from the Dagit UI without errors
-- [ ] Asset graph in Dagit shows the correct dependency structure matching the architecture diagram
+- [ ] All assets can be materialized in sequence from the Dagster User Interface without errors
+- [ ] Asset graph in Dagster User Interface shows the correct dependency structure matching the architecture diagram
 - [ ] `patient_summaries` table contains aggregated data after materialization
 - [ ] `readmission_flags` table contains flagged readmissions after materialization
 - [ ] `department_metrics` table contains per-department KPIs after materialization
@@ -327,15 +327,15 @@ Rules:
 
 ---
 
-### US-12: Prepare Live Demo in Dagit
+### US-12: Prepare Live Demo in Dagster User Interface
 
 **As a** team,
-**I want** a polished live demo of the pipeline running in Dagit,
+**I want** a polished live demo of the pipeline running in Dagster User Interface,
 **So that** we can present our work to instructors and stakeholders.
 
 **Acceptance Criteria:**
 - [ ] Demo script is prepared covering: asset graph overview, materialization run, schedule configuration
-- [ ] Asset graph is shown in Dagit with all groups and dependencies clearly visible
+- [ ] Asset graph is shown in Dagster User Interface with all groups and dependencies clearly visible
 - [ ] Readmission detection is demonstrated: materialize `readmission_flags`, query results, explain the logic
 - [ ] Department metrics dashboard data is shown: materialize `department_metrics`, query results from PostgreSQL
 - [ ] Schedule `weekly_analytics_schedule` is shown as registered and active
@@ -363,7 +363,7 @@ Rules:
 | US-09 | weekly_analytics_schedule          | 3      | Must Have     | 4    |
 | US-10 | End-to-end pipeline test           | 3      | Must Have     | 4    |
 | US-11 | Architecture decision records      | 3      | Should Have   | 5    |
-| US-12 | Prepare live demo in Dagit        | 3      | Must Have     | 5    |
+| US-12 | Prepare live demo in Dagster User Interface        | 3      | Must Have     | 5    |
 | **Total** |                              | **38** |               |      |
 
 ---
@@ -411,7 +411,7 @@ Rules:
 - [ ] An EC2 `t3.micro` instance is launched and configured with Python, uv, and the project
 - [ ] CSV data files are uploaded to an S3 bucket
 - [ ] Environment variables (DB host, credentials, S3 bucket) are configured via `.env`
-- [ ] `dg dev` runs on EC2 and Dagit UI is accessible via the instance's public IP
+- [ ] `dg dev` runs on EC2 and Dagster User Interface is accessible via the instance's public IP
 - [ ] All assets can be materialized against the RDS database
 - [ ] All resources are torn down after the demo to avoid charges
 
@@ -455,7 +455,7 @@ Rules:
 | US-09 | weekly_analytics_schedule          | 3      | Must Have     | 4    | Yes      |
 | US-10 | End-to-end pipeline test           | 3      | Must Have     | 4    | Yes      |
 | US-11 | Architecture decision records      | 3      | Should Have   | 5    | Yes      |
-| US-12 | Prepare live demo in Dagit        | 3      | Must Have     | 5    | Yes      |
+| US-12 | Prepare live demo in Dagster User Interface        | 3      | Must Have     | 5    | Yes      |
 | US-13 | Refactor ingestion to use pandas   | 3      | Could Have    | 6    | No       |
 | US-14 | Deploy pipeline to AWS             | 5      | Could Have    | 7    | No       |
 | US-15 | Adapt CSV ingestion for S3         | 3      | Could Have    | 7    | No       |

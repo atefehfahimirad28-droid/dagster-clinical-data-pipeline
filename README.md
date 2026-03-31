@@ -108,7 +108,7 @@ stubs.
 dg dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) to view the Dagit UI.
+Open [http://localhost:3000](http://localhost:3000) to view the Dagster User Interface.
 
 ## Task Breakdown
 
@@ -190,16 +190,16 @@ Example branch names: `feature/postgres-resource`, `feature/raw-ingestion`,
 ## Expected Deliverables
 
 1. All tests passing (`uv run pytest tests/ -v`)
-2. Complete asset graph visible in Dagit UI
+2. Complete asset graph visible in Dagster User Interface
 3. Successful materialization of all assets against the Docker PostgreSQL
-4. Weekly schedule registered and visible in Dagit
+4. Weekly schedule registered and visible in Dagster User Interface
 
 ## Success Criteria
 
 | Criterion | Weight |
 |-----------|--------|
 | All 12 tests pass | 30% |
-| Assets materialize without errors in Dagit | 25% |
+| Assets materialize without errors in Dagster User Interface | 25% |
 | Correct asset dependencies (graph structure) | 15% |
 | Readmission detection logic is correct | 15% |
 | Schedule and jobs properly configured | 10% |

@@ -106,7 +106,7 @@ aws ec2 create-security-group \
   --group-name clinicflow-ec2-sg \
   --description "ClinicFlow EC2"
 
-# SSH- und Dagit-UI-Zugriff erlauben
+# SSH- und Dagster-Benutzeroberflaeche-Zugriff erlauben
 aws ec2 authorize-security-group-ingress \
   --group-name clinicflow-ec2-sg \
   --protocol tcp --port 22 --cidr 0.0.0.0/0
@@ -174,7 +174,7 @@ EOF
 DAGSTER_HOME=~/dagster_home dg dev --host 0.0.0.0 --port 3000
 ```
 
-Dagit aufrufen unter `http://<EC2-OEFFENTLICHE-IP>:3000`.
+Dagster User Interface aufrufen unter `http://<EC2-OEFFENTLICHE-IP>:3000`.
 
 ## Schritt 7: Aufraumen (Wichtig!)
 

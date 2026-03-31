@@ -15,7 +15,7 @@ Dieses Projekt folgt einer agilen Arbeitsweise. Jedes Team wird erwartet:
 
 - **Sprint Planning (Tag 1 jedes Sprints):** Backlog pruefen, User Stories fuer den Sprint auswaehlen, Verantwortlichkeiten zuweisen, Stories bei Bedarf in Aufgaben zerlegen.
 - **Daily Standup (max. 15 Min.):** Jedes Teammitglied beantwortet: Was habe ich gestern gemacht? Was mache ich heute? Gibt es Blocker?
-- **Sprint Review (letzter Tag des Sprints):** Fertige Arbeit dem Dozenten/den Stakeholdern demonstrieren. Funktionierende Software zeigen (Dagit-UI, gruene Tests, CI-Pipeline).
+- **Sprint Review (letzter Tag des Sprints):** Fertige Arbeit dem Dozenten/den Stakeholdern demonstrieren. Funktionierende Software zeigen (Dagster-Benutzeroberflaeche, gruene Tests, CI-Pipeline).
 - **Sprint Retrospektive (nach dem Review):** Besprechen, was gut lief, was verbessert werden kann, und eine konkrete Massnahme fuer den naechsten Sprint vereinbaren.
 
 Nutzt ein Projektboard (GitHub Projects, Trello o.Ae.) zur Nachverfolgung des Story-Status: **To Do**, **In Arbeit**, **Im Review**, **Fertig**.
@@ -275,7 +275,7 @@ Regeln:
 - [ ] `readmission_screening_job` ist definiert und waehlt nur Wiederaufnahme- und Patientenzusammenfassungs-Assets aus
 - [ ] `weekly_analytics_schedule` ist in `src/clinicflow/defs/schedules.py` definiert
 - [ ] Schedule loest `weekly_analytics_job` mit einem Cron-Ausdruck fuer jeden Montag um 07:00 aus (`0 7 * * 1`)
-- [ ] Schedule ist in der Dagit-UI sichtbar und registriert
+- [ ] Schedule ist in der Dagster-Benutzeroberflaeche sichtbar und registriert
 - [ ] Zugehoerige Tests bestehen
 
 **Story Points:** 3 (mittel)
@@ -284,15 +284,15 @@ Regeln:
 
 ---
 
-### US-10: End-to-End-Pipeline-Test in Dagit
+### US-10: End-to-End-Pipeline-Test in Dagster User Interface
 
 **Als** Team
-**moechte ich** verifizieren, dass die gesamte Pipeline end-to-end in Dagit funktioniert,
+**moechte ich** verifizieren, dass die gesamte Pipeline end-to-end in Dagster User Interface funktioniert,
 **damit** wir ein funktionierendes System selbstbewusst demonstrieren und abliefern koennen.
 
 **Akzeptanzkriterien:**
-- [ ] Alle Assets koennen in der Dagit-UI nacheinander ohne Fehler materialisiert werden
-- [ ] Der Asset-Graph in Dagit zeigt die korrekte Abhaengigkeitsstruktur gemaess dem Architekturdiagramm
+- [ ] Alle Assets koennen in der Dagster-Benutzeroberflaeche nacheinander ohne Fehler materialisiert werden
+- [ ] Der Asset-Graph in Dagster User Interface zeigt die korrekte Abhaengigkeitsstruktur gemaess dem Architekturdiagramm
 - [ ] Die Tabelle `patient_summaries` enthaelt nach der Materialisierung aggregierte Daten
 - [ ] Die Tabelle `readmission_flags` enthaelt nach der Materialisierung gekennzeichnete Wiederaufnahmen
 - [ ] Die Tabelle `department_metrics` enthaelt nach der Materialisierung KPIs pro Abteilung
@@ -327,15 +327,15 @@ Regeln:
 
 ---
 
-### US-12: Live-Demo in Dagit vorbereiten
+### US-12: Live-Demo in Dagster User Interface vorbereiten
 
 **Als** Team
-**moechte ich** eine ausgefeilte Live-Demo der Pipeline in Dagit,
+**moechte ich** eine ausgefeilte Live-Demo der Pipeline in Dagster User Interface,
 **damit** wir unsere Arbeit Dozenten und Stakeholdern praesentieren koennen.
 
 **Akzeptanzkriterien:**
 - [ ] Demo-Skript ist vorbereitet und umfasst: Asset-Graph-Uebersicht, Materialisierungslauf, Schedule-Konfiguration
-- [ ] Asset-Graph wird in Dagit mit allen Gruppen und Abhaengigkeiten uebersichtlich angezeigt
+- [ ] Asset-Graph wird in Dagster User Interface mit allen Gruppen und Abhaengigkeiten uebersichtlich angezeigt
 - [ ] Wiederaufnahme-Erkennung wird demonstriert: `readmission_flags` materialisieren, Ergebnisse abfragen, Logik erklaeren
 - [ ] Abteilungsmetriken-Daten werden gezeigt: `department_metrics` materialisieren, Ergebnisse aus PostgreSQL abfragen
 - [ ] Schedule `weekly_analytics_schedule` wird als registriert und aktiv angezeigt
@@ -363,7 +363,7 @@ Regeln:
 | US-09 | weekly_analytics_schedule                | 3      | Must Have     | 4    |
 | US-10 | End-to-End-Pipeline-Test                 | 3      | Must Have     | 4    |
 | US-11 | Architecture Decision Records            | 3      | Should Have   | 5    |
-| US-12 | Live-Demo in Dagit vorbereiten           | 3      | Must Have     | 5    |
+| US-12 | Live-Demo in Dagster User Interface vorbereiten           | 3      | Must Have     | 5    |
 | **Gesamt** |                                     | **38** |               |      |
 
 ---
@@ -411,7 +411,7 @@ Regeln:
 - [ ] Eine EC2-`t3.micro`-Instanz ist gestartet und mit Python, uv und dem Projekt konfiguriert
 - [ ] CSV-Datendateien sind in einen S3-Bucket hochgeladen
 - [ ] Umgebungsvariablen (DB-Host, Zugangsdaten, S3-Bucket) sind ueber `.env` konfiguriert
-- [ ] `dg dev` laeuft auf EC2 und die Dagit-UI ist ueber die oeffentliche IP der Instanz erreichbar
+- [ ] `dg dev` laeuft auf EC2 und die Dagster-Benutzeroberflaeche ist ueber die oeffentliche IP der Instanz erreichbar
 - [ ] Alle Assets koennen gegen die RDS-Datenbank materialisiert werden
 - [ ] Alle Ressourcen werden nach der Demo abgebaut, um Kosten zu vermeiden
 
@@ -455,7 +455,7 @@ Regeln:
 | US-09 | weekly_analytics_schedule                | 3      | Must Have     | 4    | Ja       |
 | US-10 | End-to-End-Pipeline-Test                 | 3      | Must Have     | 4    | Ja       |
 | US-11 | Architecture Decision Records            | 3      | Should Have   | 5    | Ja       |
-| US-12 | Live-Demo in Dagit vorbereiten           | 3      | Must Have     | 5    | Ja       |
+| US-12 | Live-Demo in Dagster User Interface vorbereiten           | 3      | Must Have     | 5    | Ja       |
 | US-13 | Datenaufnahme auf pandas umstellen       | 3      | Could Have    | 6    | Nein     |
 | US-14 | Pipeline auf AWS deployen                | 5      | Could Have    | 7    | Nein     |
 | US-15 | CSV-Aufnahme fuer S3 anpassen            | 3      | Could Have    | 7    | Nein     |
