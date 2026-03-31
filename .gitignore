@@ -6,3 +6,10 @@ __pycache__/
 dist/
 build/
 .dagster/
+*.db
+.env
+CLAUDE.md
+AGENTS.md
+PLAN.md
+.claude/
+.vscode/

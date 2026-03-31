@@ -3,7 +3,7 @@
 **Project:** Capstone Medical -- Clinical Analytics Pipeline
 **Client:** Charite -- Universitaetsmedizin Berlin (educational context)
 **Team:** Junior Data Engineers (group project)
-**Technology:** Dagster, PostgreSQL, Docker, Python, pandas, psycopg2
+**Technology:** Dagster, PostgreSQL, Docker, Python, psycopg2
 
 > **Data Privacy Notice:** All patient data in this project is entirely synthetic and fictional. No real protected health information (PHI) is used. The reference to Charite is for educational context only.
 
@@ -24,11 +24,26 @@ Use a project board (GitHub Projects, Trello, or similar) to track story status:
 
 ## Suggested Sprint Plan
 
-| Sprint   | Duration | Epics                              | Focus                                    |
-|----------|----------|------------------------------------|------------------------------------------|
-| Sprint 1 | ~3 days  | Epic 1 (Project Setup & CI/CD) + Epic 2 (Infrastructure & Resources) | Foundation: repo, CI/CD, Docker, PostgresResource |
-| Sprint 2 | ~4 days  | Epic 3 (Data Ingestion) + Epic 4 (Clinical Transformations)          | Core pipeline: raw assets + analytics    |
-| Sprint 3 | ~3 days  | Epic 5 (Orchestration) + Epic 6 (Documentation & Demo)              | Scheduling, end-to-end test, demo prep   |
+Sprints are hourly blocks over a 2-day period. Each sprint includes a brief standup, focused work, and a quick review.
+
+### Day 1
+
+| Sprint   | Duration | Epics / Stories         | Focus                                    |
+|----------|----------|-------------------------|------------------------------------------|
+| Sprint 1 | 1 hour   | Epic 1: US-01           | Implement `PostgresResource` (`get_connection`, `execute_query`, `load_rows`) |
+| Sprint 2 | 1 hour   | Epic 2: US-02, US-03    | Raw ingestion: `raw_patients`, `raw_visits` |
+| Sprint 3 | 1 hour   | Epic 2: US-04, US-05    | Raw ingestion: `raw_diagnoses`, `raw_prescriptions` |
+| Sprint 4 | 1 hour   | Epic 3: US-07           | `detect_readmissions()` helper + `readmission_flags` asset |
+| Sprint 5 | 1 hour   | Epic 3: US-06           | `calculate_avg_stay()` helper + `patient_summaries` asset |
+
+### Day 2
+
+| Sprint   | Duration | Epics / Stories         | Focus                                    |
+|----------|----------|-------------------------|------------------------------------------|
+| Sprint 6 | 1 hour   | Epic 3: US-08           | `department_metrics` asset               |
+| Sprint 7 | 1 hour   | Epic 4: US-09, US-10    | Jobs, schedule, end-to-end verification  |
+| Sprint 8 | 1 hour   | Epic 5: US-11, US-12    | Architecture decision records + demo prep |
+| Sprint 9 | 1 hour   | Epic 6--7: US-13--US-15 | Advanced / extension stories (optional)  |
 
 ---
 
@@ -49,9 +64,9 @@ A user story is considered **Done** when all of the following are met:
 
 ```
 main                          (protected -- merge only via PR)
-  ├── feature/US-01-repo-setup
-  ├── feature/US-02-ci-pipeline
-  ├── feature/US-07-raw-patients
+  ├── feature/US-01-postgres-resource
+  ├── feature/US-02-raw-patients
+  ├── feature/US-06-patient-summaries
   └── ...
 ```
 
@@ -69,113 +84,13 @@ Rules:
 
 - All data files (`data/*.csv`) contain **synthetic, computer-generated records**. No real patient data is used at any point.
 - Even with synthetic data, treat the project as if it were real: do not commit credentials, do not expose database ports publicly, use `.env` files for secrets and add them to `.gitignore`.
-- In architecture decision records (US-16), discuss what data privacy measures would be required for a real clinical data pipeline (e.g., GDPR, HIPAA, anonymization, access control, audit logging).
+- In architecture decision records (US-11), discuss what data privacy measures would be required for a real clinical data pipeline (e.g., GDPR, HIPAA, anonymization, access control, audit logging).
 
 ---
 
-## Epic 1: Project Setup & CI/CD
+## Epic 1: Resources
 
-### US-01: Repository and Branch Strategy Setup
-
-**As a** development team,
-**I want** a properly configured Git repository with a branching strategy,
-**So that** we can collaborate without merge conflicts and maintain code quality.
-
-**Acceptance Criteria:**
-- [ ] GitHub repository is created and all team members have push access
-- [ ] `main` branch exists and is protected (no direct pushes, require PR review)
-- [ ] Branch naming convention `feature/US-XX-description` is documented and agreed upon
-- [ ] `.gitignore` includes `.venv/`, `__pycache__/`, `.env`, `.dagster/`, `*.pyc`
-- [ ] All team members have cloned the repo and can create feature branches
-
-**Story Points:** 2 (small)
-**Priority:** Must Have
-**Suggested Assignee:** Team Lead / DevOps
-
----
-
-### US-02: CI Pipeline with GitHub Actions
-
-**As a** development team,
-**I want** an automated CI pipeline that lints and tests every pull request,
-**So that** we catch errors early and maintain code quality.
-
-**Acceptance Criteria:**
-- [ ] `.github/workflows/ci.yml` exists and runs on every PR to `main`
-- [ ] Pipeline installs dependencies using `uv sync --dev`
-- [ ] Pipeline runs `ruff check .` for linting (zero violations required)
-- [ ] Pipeline runs `uv run pytest tests/ -v` and fails if any test fails
-- [ ] PR merge is blocked if CI pipeline fails (branch protection rule)
-- [ ] Pipeline runs on Python 3.10+ (matching the project requirement)
-
-**Story Points:** 3 (medium)
-**Priority:** Must Have
-**Suggested Assignee:** DevOps / CI Engineer
-
----
-
-### US-03: CD Pipeline for Deployment Readiness
-
-**As a** development team,
-**I want** a CD pipeline that verifies Docker builds and infrastructure health,
-**So that** we know our application is deployable at all times.
-
-**Acceptance Criteria:**
-- [ ] CI/CD workflow includes a step to run `docker compose build` and verify it succeeds
-- [ ] A step runs `docker compose up -d` and verifies all services reach healthy state
-- [ ] PostgreSQL health check passes (connection test using `pg_isready` or similar)
-- [ ] Pipeline tears down Docker resources after verification (`docker compose down`)
-- [ ] Pipeline runs on the `main` branch after merge (or on a schedule)
-
-**Story Points:** 3 (medium)
-**Priority:** Should Have
-**Suggested Assignee:** DevOps / CI Engineer
-
----
-
-### US-04: Development Environment Setup
-
-**As a** team member,
-**I want** a working local development environment,
-**So that** I can develop and test pipeline code on my machine.
-
-**Acceptance Criteria:**
-- [ ] `docker compose up -d` starts PostgreSQL with the `clinicflow` database and schema
-- [ ] `uv sync --dev` installs all Python dependencies without errors
-- [ ] `uv run pytest tests/ -v` runs (tests may fail, but the test runner works)
-- [ ] `dg dev` starts the Dagster dev server and Dagit UI is accessible at `localhost:3000`
-- [ ] Every team member has confirmed their environment works (documented in a checklist)
-- [ ] A brief `SETUP.md` or section in README describes the setup steps
-
-**Story Points:** 2 (small)
-**Priority:** Must Have
-**Suggested Assignee:** All Team Members
-
----
-
-## Epic 2: Infrastructure & Resources
-
-### US-05: PostgreSQL Database Setup
-
-**As a** data engineer,
-**I want** a PostgreSQL database running in Docker with pre-created tables,
-**So that** our pipeline has a target to load data into.
-
-**Acceptance Criteria:**
-- [ ] `docker compose up -d` starts PostgreSQL 17 on port 5432
-- [ ] The `clinicflow` database is created automatically
-- [ ] `init.sql` creates all required tables: `patients`, `visits`, `diagnoses`, `prescriptions`, `readmission_flags`, `patient_summaries`, `department_metrics`
-- [ ] Tables match the schema expected by the assets (correct column names and types)
-- [ ] Database can be connected to with the credentials in `docker-compose.yml`
-- [ ] Running `docker compose down -v` and `docker compose up -d` gives a clean database
-
-**Story Points:** 2 (small)
-**Priority:** Must Have
-**Suggested Assignee:** Infrastructure / Backend
-
----
-
-### US-06: Implement PostgresResource
+### US-01: Implement PostgresResource
 
 **As a** data engineer,
 **I want** a reusable Dagster resource for PostgreSQL operations,
@@ -185,7 +100,7 @@ Rules:
 - [ ] `PostgresResource` class is implemented in `src/clinicflow/defs/resources.py`
 - [ ] `get_connection()` returns a valid `psycopg2` connection to the clinicflow database
 - [ ] `execute_query(query, params)` executes a SQL statement and returns results for SELECT queries
-- [ ] `load_dataframe(df, table_name)` bulk-inserts a pandas DataFrame into the specified table and returns the row count
+- [ ] `load_rows(rows, table_name)` bulk-inserts a list of dicts into the specified table and returns the row count
 - [ ] Connections are properly closed after use (context manager or explicit close)
 - [ ] Unit tests for the resource methods pass
 
@@ -195,17 +110,17 @@ Rules:
 
 ---
 
-## Epic 3: Data Ingestion (Raw Assets)
+## Epic 2: Data Ingestion (Raw Assets)
 
-### US-07: Implement raw_patients Asset
+### US-02: Implement raw_patients Asset
 
 **As a** data engineer,
 **I want** a Dagster asset that loads `patients.csv` into PostgreSQL,
 **So that** patient data is available for downstream analytics.
 
 **Acceptance Criteria:**
-- [ ] `raw_patients` asset reads `data/patients.csv` using pandas
-- [ ] Data is inserted into the `patients` table via `postgres.load_dataframe()`
+- [ ] `raw_patients` asset reads `data/patients.csv` using `csv.DictReader`
+- [ ] Data is inserted into the `patients` table via `postgres.load_rows()`
 - [ ] Asset returns `MaterializeResult` with `row_count` metadata
 - [ ] Asset logs the number of loaded patients
 - [ ] Asset belongs to the `raw_ingestion` group
@@ -217,15 +132,15 @@ Rules:
 
 ---
 
-### US-08: Implement raw_visits Asset
+### US-03: Implement raw_visits Asset
 
 **As a** data engineer,
 **I want** a Dagster asset that loads `visits.csv` into PostgreSQL,
 **So that** visit data is available for readmission detection and department metrics.
 
 **Acceptance Criteria:**
-- [ ] `raw_visits` asset reads `data/visits.csv` using pandas
-- [ ] Data is inserted into the `visits` table via `postgres.load_dataframe()`
+- [ ] `raw_visits` asset reads `data/visits.csv` using `csv.DictReader`
+- [ ] Data is inserted into the `visits` table via `postgres.load_rows()`
 - [ ] Asset returns `MaterializeResult` with `row_count` metadata
 - [ ] Asset logs the number of loaded visits
 - [ ] Asset belongs to the `raw_ingestion` group
@@ -237,15 +152,15 @@ Rules:
 
 ---
 
-### US-09: Implement raw_diagnoses Asset
+### US-04: Implement raw_diagnoses Asset
 
 **As a** data engineer,
 **I want** a Dagster asset that loads `diagnoses.csv` into PostgreSQL,
 **So that** diagnosis data is available for department metrics and analytics.
 
 **Acceptance Criteria:**
-- [ ] `raw_diagnoses` asset reads `data/diagnoses.csv` using pandas
-- [ ] Data is inserted into the `diagnoses` table via `postgres.load_dataframe()`
+- [ ] `raw_diagnoses` asset reads `data/diagnoses.csv` using `csv.DictReader`
+- [ ] Data is inserted into the `diagnoses` table via `postgres.load_rows()`
 - [ ] Asset returns `MaterializeResult` with `row_count` metadata
 - [ ] Asset logs the number of loaded diagnoses
 - [ ] Asset belongs to the `raw_ingestion` group
@@ -257,15 +172,15 @@ Rules:
 
 ---
 
-### US-10: Implement raw_prescriptions Asset
+### US-05: Implement raw_prescriptions Asset
 
 **As a** data engineer,
 **I want** a Dagster asset that loads `prescriptions.csv` into PostgreSQL,
 **So that** prescription data is available for patient summary calculations.
 
 **Acceptance Criteria:**
-- [ ] `raw_prescriptions` asset reads `data/prescriptions.csv` using pandas
-- [ ] Data is inserted into the `prescriptions` table via `postgres.load_dataframe()`
+- [ ] `raw_prescriptions` asset reads `data/prescriptions.csv` using `csv.DictReader`
+- [ ] Data is inserted into the `prescriptions` table via `postgres.load_rows()`
 - [ ] Asset returns `MaterializeResult` with `row_count` metadata
 - [ ] Asset logs the number of loaded prescriptions
 - [ ] Asset belongs to the `raw_ingestion` group
@@ -277,9 +192,9 @@ Rules:
 
 ---
 
-## Epic 4: Clinical Transformations
+## Epic 3: Clinical Transformations
 
-### US-11: Implement patient_summaries Asset
+### US-06: Implement patient_summaries Asset
 
 **As a** clinical data analyst,
 **I want** per-patient summary statistics aggregated from multiple data sources,
@@ -301,7 +216,7 @@ Rules:
 
 ---
 
-### US-12: Implement readmission_flags Asset
+### US-07: Implement readmission_flags Asset
 
 **As a** quality management officer,
 **I want** patients readmitted within a configurable window (default 30 days) to be flagged,
@@ -324,7 +239,7 @@ Rules:
 
 ---
 
-### US-13: Implement department_metrics Asset
+### US-08: Implement department_metrics Asset
 
 **As a** department head,
 **I want** per-department performance KPIs calculated from visit and diagnosis data,
@@ -347,9 +262,9 @@ Rules:
 
 ---
 
-## Epic 5: Orchestration
+## Epic 4: Orchestration
 
-### US-14: Implement weekly_analytics_schedule
+### US-09: Implement weekly_analytics_schedule
 
 **As a** data platform operator,
 **I want** the analytics pipeline to run automatically every Monday at 07:00,
@@ -369,7 +284,7 @@ Rules:
 
 ---
 
-### US-15: End-to-End Pipeline Test in Dagit
+### US-10: End-to-End Pipeline Test in Dagit
 
 **As a** team,
 **I want** to verify that the entire pipeline works end-to-end in Dagit,
@@ -390,9 +305,9 @@ Rules:
 
 ---
 
-## Epic 6: Documentation & Demo
+## Epic 5: Documentation & Demo
 
-### US-16: Write Architecture Decision Records
+### US-11: Write Architecture Decision Records
 
 **As a** team,
 **I want** documented architecture decisions,
@@ -412,7 +327,7 @@ Rules:
 
 ---
 
-### US-17: Prepare Live Demo in Dagit
+### US-12: Prepare Live Demo in Dagit
 
 **As a** team,
 **I want** a polished live demo of the pipeline running in Dagit,
@@ -437,21 +352,112 @@ Rules:
 
 | ID    | Title                              | Points | Priority      | Epic |
 |-------|------------------------------------|--------|---------------|------|
-| US-01 | Repository and branch strategy     | 2      | Must Have     | 1    |
-| US-02 | CI pipeline with GitHub Actions    | 3      | Must Have     | 1    |
-| US-03 | CD pipeline for deployment         | 3      | Should Have   | 1    |
-| US-04 | Development environment setup      | 2      | Must Have     | 1    |
-| US-05 | PostgreSQL database setup          | 2      | Must Have     | 2    |
-| US-06 | Implement PostgresResource         | 3      | Must Have     | 2    |
-| US-07 | Implement raw_patients asset       | 2      | Must Have     | 3    |
-| US-08 | Implement raw_visits asset         | 2      | Must Have     | 3    |
-| US-09 | Implement raw_diagnoses asset      | 2      | Must Have     | 3    |
-| US-10 | Implement raw_prescriptions asset  | 2      | Must Have     | 3    |
-| US-11 | Implement patient_summaries asset  | 5      | Must Have     | 4    |
-| US-12 | Implement readmission_flags asset  | 5      | Must Have     | 4    |
-| US-13 | Implement department_metrics asset | 5      | Must Have     | 4    |
-| US-14 | weekly_analytics_schedule          | 3      | Must Have     | 5    |
-| US-15 | End-to-end pipeline test           | 3      | Must Have     | 5    |
-| US-16 | Architecture decision records      | 3      | Should Have   | 6    |
-| US-17 | Prepare live demo in Dagit        | 3      | Must Have     | 6    |
-| **Total** |                              | **50** |               |      |
+| US-01 | Implement PostgresResource         | 3      | Must Have     | 1    |
+| US-02 | Implement raw_patients asset       | 2      | Must Have     | 2    |
+| US-03 | Implement raw_visits asset         | 2      | Must Have     | 2    |
+| US-04 | Implement raw_diagnoses asset      | 2      | Must Have     | 2    |
+| US-05 | Implement raw_prescriptions asset  | 2      | Must Have     | 2    |
+| US-06 | Implement patient_summaries asset  | 5      | Must Have     | 3    |
+| US-07 | Implement readmission_flags asset  | 5      | Must Have     | 3    |
+| US-08 | Implement department_metrics asset | 5      | Must Have     | 3    |
+| US-09 | weekly_analytics_schedule          | 3      | Must Have     | 4    |
+| US-10 | End-to-end pipeline test           | 3      | Must Have     | 4    |
+| US-11 | Architecture decision records      | 3      | Should Have   | 5    |
+| US-12 | Prepare live demo in Dagit        | 3      | Must Have     | 5    |
+| **Total** |                              | **38** |               |      |
+
+---
+
+## Advanced / Extension Stories
+
+> The following stories are **optional** and intended for advanced students or teams that have completed the core pipeline ahead of schedule. They are **not required** for the capstone grade.
+
+---
+
+### Epic 6: Advanced -- Pandas Integration (Optional)
+
+### US-13: Refactor Ingestion to Use pandas
+
+**As a** data engineer who is comfortable with pandas,
+**I want** to replace `csv.DictReader` + `load_rows()` with pandas DataFrames,
+**So that** I can leverage pandas for data validation and transformation before loading.
+
+**Acceptance Criteria:**
+- [ ] Install pandas as an optional dependency: `uv add pandas` (already available via `[project.optional-dependencies]` in `pyproject.toml`)
+- [ ] Add a `load_dataframe(df, table_name)` method to `PostgresResource` that accepts a pandas DataFrame
+- [ ] Refactor raw ingestion assets to use `pd.read_csv()` and `postgres.load_dataframe()`
+- [ ] All existing tests still pass
+- [ ] No change to the asset dependency graph or public interface
+
+**Story Points:** 3 (medium)
+**Priority:** Could Have
+**Suggested Assignee:** Advanced student
+
+---
+
+### Epic 7: Advanced -- AWS Deployment (Optional)
+
+> See [AWS_DEPLOYMENT.md](AWS_DEPLOYMENT.md) for the full step-by-step guide.
+
+### US-14: Deploy Pipeline to AWS (EC2 + RDS)
+
+**As a** data engineer familiar with AWS,
+**I want** to deploy the ClinicFlow pipeline to EC2 with an RDS PostgreSQL backend,
+**So that** the pipeline runs in a cloud environment similar to production.
+
+**Acceptance Criteria:**
+- [ ] An RDS PostgreSQL `db.t3.micro` instance is provisioned (Free Tier)
+- [ ] The database schema (`db/init.sql`) is applied to the RDS instance
+- [ ] An EC2 `t3.micro` instance is launched and configured with Python, uv, and the project
+- [ ] CSV data files are uploaded to an S3 bucket
+- [ ] Environment variables (DB host, credentials, S3 bucket) are configured via `.env`
+- [ ] `dg dev` runs on EC2 and Dagit UI is accessible via the instance's public IP
+- [ ] All assets can be materialized against the RDS database
+- [ ] All resources are torn down after the demo to avoid charges
+
+**Story Points:** 5 (large)
+**Priority:** Could Have
+**Suggested Assignee:** Advanced student / team with AWS experience
+
+---
+
+### US-15: Adapt CSV Ingestion for S3
+
+**As a** data engineer,
+**I want** the raw ingestion assets to read CSV files from S3 instead of the local filesystem,
+**So that** the pipeline works in a cloud-native deployment.
+
+**Acceptance Criteria:**
+- [ ] `boto3` is added as a dependency (`uv add boto3`)
+- [ ] A helper function reads CSV files from S3 using `boto3` and returns a list of dicts
+- [ ] Raw ingestion assets detect whether to read from local `data/` or S3 based on an environment variable
+- [ ] The pipeline works both locally (CSV files) and on AWS (S3)
+- [ ] All existing tests still pass (they do not require S3 access)
+
+**Story Points:** 3 (medium)
+**Priority:** Could Have
+**Suggested Assignee:** Advanced student
+
+---
+
+## Extended Summary Table (Including Advanced Stories)
+
+| ID    | Title                              | Points | Priority      | Epic | Required |
+|-------|------------------------------------|--------|---------------|------|----------|
+| US-01 | Implement PostgresResource         | 3      | Must Have     | 1    | Yes      |
+| US-02 | Implement raw_patients asset       | 2      | Must Have     | 2    | Yes      |
+| US-03 | Implement raw_visits asset         | 2      | Must Have     | 2    | Yes      |
+| US-04 | Implement raw_diagnoses asset      | 2      | Must Have     | 2    | Yes      |
+| US-05 | Implement raw_prescriptions asset  | 2      | Must Have     | 2    | Yes      |
+| US-06 | Implement patient_summaries asset  | 5      | Must Have     | 3    | Yes      |
+| US-07 | Implement readmission_flags asset  | 5      | Must Have     | 3    | Yes      |
+| US-08 | Implement department_metrics asset | 5      | Must Have     | 3    | Yes      |
+| US-09 | weekly_analytics_schedule          | 3      | Must Have     | 4    | Yes      |
+| US-10 | End-to-end pipeline test           | 3      | Must Have     | 4    | Yes      |
+| US-11 | Architecture decision records      | 3      | Should Have   | 5    | Yes      |
+| US-12 | Prepare live demo in Dagit        | 3      | Must Have     | 5    | Yes      |
+| US-13 | Refactor ingestion to use pandas   | 3      | Could Have    | 6    | No       |
+| US-14 | Deploy pipeline to AWS             | 5      | Could Have    | 7    | No       |
+| US-15 | Adapt CSV ingestion for S3         | 3      | Could Have    | 7    | No       |
+| **Core Total** |                         | **38** |               |      |          |
+| **With Advanced** |                      | **49** |               |      |          |
