@@ -187,6 +187,7 @@ def raw_patients(
 
 
 @dg.asset(
+    deps=[raw_patients],
     group_name="raw_ingestion",
     kinds={"python", "postgres"},
 )
@@ -195,6 +196,8 @@ def raw_visits(
     postgres: PostgresResource,
 ) -> dg.MaterializeResult:
     """Load visits.csv into the visits table.
+
+    Depends on raw_patients (FK: visits.patient_id -> patients.patient_id).
 
     Steps:
         1. Read data/visits.csv with csv.DictReader
@@ -227,6 +230,7 @@ def raw_diagnoses(
 
 
 @dg.asset(
+    deps=[raw_patients, raw_visits],
     group_name="raw_ingestion",
     kinds={"python", "postgres"},
 )
@@ -235,6 +239,8 @@ def raw_prescriptions(
     postgres: PostgresResource,
 ) -> dg.MaterializeResult:
     """Load prescriptions.csv into the prescriptions table.
+
+    Depends on raw_patients and raw_visits (FK constraints).
 
     Steps:
         1. Read data/prescriptions.csv with csv.DictReader
