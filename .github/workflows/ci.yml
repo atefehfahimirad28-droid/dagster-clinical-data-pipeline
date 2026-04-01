@@ -17,6 +17,8 @@ jobs:
 
       - name: Check conventional commits
         uses: webiny/action-conventional-commits@v1.3.0
+        with:
+          alloweod-prefixes: "Merge"
 
   lint:
     name: Ruff Lint & Format
