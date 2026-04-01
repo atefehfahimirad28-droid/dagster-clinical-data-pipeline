@@ -22,9 +22,9 @@ Es werden keine echten Patientendaten (PHI) verwendet.
 """
 
 import csv  # noqa: F401 -- used by students when implementing TODO stubs
+from collections import defaultdict
 from datetime import datetime
 from pathlib import Path
-from collections import defaultdict
 
 import dagster as dg
 
@@ -367,22 +367,24 @@ def patient_summaries(
     )
     context.log.info(f"💊 Retrieved {len(prescriptions)} prescription records")
 
-    readmissions = postgres.execute_query(
-        "SELECT patient_id FROM readmission_flags"
-    )
+    readmissions = postgres.execute_query("SELECT patient_id FROM readmission_flags")
 
     readmission_patients = {row[0] for row in readmissions}
     if readmission_patients:
-        context.log.info(f"⚠️  {len(readmission_patients)} patients have readmission flags")
+        context.log.info(
+            f"⚠️  {len(readmission_patients)} patients have readmission flags"
+        )
 
     patient_visits = defaultdict(list)
     for visit in visits:
         patient_id = visit[0]
-        patient_visits[patient_id].append({
-            'department': visit[1],
-            'admission_date': visit[2],
-            'discharge_date': visit[3]
-        })
+        patient_visits[patient_id].append(
+            {
+                "department": visit[1],
+                "admission_date": visit[2],
+                "discharge_date": visit[3],
+            }
+        )
 
     summaries = []
     risk_distribution = defaultdict(int)
@@ -394,7 +396,7 @@ def patient_summaries(
         total_visits = len(visits_list)
 
         if visits_list:
-            last_visit = max(v['admission_date'] for v in visits_list)
+            last_visit = max(v["admission_date"] for v in visits_list)
             last_visit_date = last_visit
         else:
             last_visit_date = None
@@ -402,14 +404,14 @@ def patient_summaries(
         if visits_list:
             dept_counts = defaultdict(int)
             for v in visits_list:
-                dept_counts[v['department']] += 1
+                dept_counts[v["department"]] += 1
             primary_department = max(dept_counts, key=dept_counts.get)
         else:
             primary_department = None
 
         stay_days = []
         for v in visits_list:
-            stay = calculate_avg_stay(v['admission_date'], v['discharge_date'])
+            stay = calculate_avg_stay(v["admission_date"], v["discharge_date"])
             stay_days.append(stay)
         avg_stay = sum(stay_days) / len(stay_days) if stay_days else 0.0
 
@@ -421,36 +423,40 @@ def patient_summaries(
                     active_count += 1
 
         if total_visits >= 5 or patient_id in readmission_patients:
-            risk_category = 'high'
+            risk_category = "high"
         elif total_visits >= 3:
-            risk_category = 'medium'
+            risk_category = "medium"
         else:
-            risk_category = 'low'
+            risk_category = "low"
 
         risk_distribution[risk_category] += 1
 
-        summaries.append({
-            'patient_id': patient_id,
-            'total_visits': total_visits,
-            'last_visit_date': last_visit_date,
-            'primary_department': primary_department,
-            'avg_stay_days': round(avg_stay, 2),
-            'active_prescriptions': active_count,
-            'risk_category': risk_category
-        })
+        summaries.append(
+            {
+                "patient_id": patient_id,
+                "total_visits": total_visits,
+                "last_visit_date": last_visit_date,
+                "primary_department": primary_department,
+                "avg_stay_days": round(avg_stay, 2),
+                "active_prescriptions": active_count,
+                "risk_category": risk_category,
+            }
+        )
 
     if summaries:
         count = postgres.load_rows(summaries, "patient_summaries")
         context.log.info(f"✅ Created {count} patient summaries")
 
-        context.log.info(f"📊 Patient Risk Distribution:")
+        context.log.info("📊 Patient Risk Distribution:")
         context.log.info(f"   └─ High risk: {risk_distribution['high']} patients")
         context.log.info(f"   └─ Medium risk: {risk_distribution['medium']} patients")
         context.log.info(f"   └─ Low risk: {risk_distribution['low']} patients")
 
-        avg_visits = sum(s['total_visits'] for s in summaries) / len(summaries)
-        avg_active_rx = sum(s['active_prescriptions'] for s in summaries) / len(summaries)
-        context.log.info(f"📈 Average Metrics:")
+        avg_visits = sum(s["total_visits"] for s in summaries) / len(summaries)
+        avg_active_rx = sum(s["active_prescriptions"] for s in summaries) / len(
+            summaries
+        )
+        context.log.info("📈 Average Metrics:")
         context.log.info(f"   └─ Visits per patient: {avg_visits:.1f}")
         context.log.info(f"   └─ Active prescriptions per patient: {avg_active_rx:.1f}")
     else:
