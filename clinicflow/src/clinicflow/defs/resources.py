@@ -1,12 +1,10 @@
 """PostgreSQL resource for the Charite clinical analytics pipeline.
 
-Students implement the TODO stubs to provide database connectivity
-for all pipeline assets.
+Provides database connectivity for all pipeline assets.
 
 German: PostgreSQL-Ressource fuer die klinische Analyse-Pipeline der Charite.
 
-Studierende implementieren die TODO-Stubs, um Datenbankverbindungen
-fuer alle Pipeline-Assets bereitzustellen.
+Stellt Datenbankverbindungen fuer alle Pipeline-Assets bereit.
 """
 
 import dagster as dg

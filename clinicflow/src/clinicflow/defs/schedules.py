@@ -1,12 +1,11 @@
 """Dagster schedules for the Charite Clinical Analytics Pipeline.
 
-Students implement the weekly schedule that triggers the full analytics
-pipeline every Monday morning.
+Weekly schedule that triggers the full analytics pipeline every Monday morning.
 
 German: Dagster-Zeitplaene fuer die klinische Analyse-Pipeline der Charite.
 
-Studierende implementieren den woechentlichen Zeitplan, der die vollstaendige
-Analyse-Pipeline jeden Montagmorgen ausloest.
+Woechentlicher Zeitplan, der die vollstaendige Analyse-Pipeline
+jeden Montagmorgen ausloest.
 """
 
 import dagster as dg

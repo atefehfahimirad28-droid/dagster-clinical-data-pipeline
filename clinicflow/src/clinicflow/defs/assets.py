@@ -1,6 +1,6 @@
 """Dagster assets for the Charite Clinical Analytics Pipeline.
 
-Students implement the TODO stubs to build the complete asset graph:
+Asset graph:
 
     raw_patients ──────────────┐
                                │
@@ -16,8 +16,7 @@ All data is synthetic/fictional. No real PHI is used.
 
 German: Dagster-Assets fuer die klinische Analyse-Pipeline der Charite.
 
-Studierende implementieren die TODO-Stubs, um den vollstaendigen
-Asset-Graphen zu erstellen. Alle Daten sind synthetisch/fiktiv.
+Alle Daten sind synthetisch/fiktiv.
 Es werden keine echten Patientendaten (PHI) verwendet.
 """
 
