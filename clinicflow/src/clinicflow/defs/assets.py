@@ -56,9 +56,13 @@ def _load_raw_data(
     file_path = DATA_DIR / f"{name}.csv"
     with open(file_path, newline="") as f:
         rows = [
-            {k: (v if v != "" else None) for k, v in row.items()}
+            {k: (v.strip() or None) if v else None for k, v in row.items()}
             for row in csv.DictReader(f)
         ]
+    if not rows:
+        postgres.execute_query(f"TRUNCATE TABLE {name} CASCADE")
+        context.log.info(f"No {name} data found, table truncated")
+        return dg.MaterializeResult(metadata={"row_count": 0})
     count = postgres.load_rows(rows, name)
     context.log.info(f"Loaded {count} {name}")
     return dg.MaterializeResult(metadata={"row_count": count})
@@ -308,10 +312,11 @@ def readmission_flags(
 
     flags = detect_readmissions(visit_dicts, window_days=30)
 
-    postgres.execute_query("TRUNCATE TABLE readmission_flags CASCADE")
-    flag_count = 0
     if flags:
         flag_count = postgres.load_rows(flags, "readmission_flags")
+    else:
+        postgres.execute_query("TRUNCATE TABLE readmission_flags CASCADE")
+        flag_count = 0
 
     context.log.info(f"Loaded {flag_count} readmission flags")
 
@@ -401,6 +406,10 @@ def patient_summaries(
 
     summaries = []
     risk_distribution = defaultdict(int)
+    if context.has_partition_key:
+        today = context.partition_time_window.start.date()
+    else:
+        today = datetime.now().date()
 
     for patient_row in patients:
         patient_id = patient_row[0]
@@ -431,7 +440,7 @@ def patient_summaries(
         active_count = sum(
             1
             for end_date in patient_prescriptions.get(patient_id, [])
-            if end_date is None or end_date > datetime.now().date()
+            if end_date is None or end_date > today
         )
 
         if total_visits >= 5 or patient_id in readmission_patients:
