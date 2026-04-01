@@ -96,16 +96,40 @@ def detect_readmissions(
     desselben Patienten zurueck, bei denen die zweite Aufnahme innerhalb von
     window_days nach der ersten Entlassung liegt.
     """
-    # TODO: Implement this function (Task 3)
-    # TODO (DE): Implementiere diese Funktion (Aufgabe 3)
-    # Hint:
-    #   flags = []
-    #   Sort visits by patient_id, then admission_date
-    #   Iterate through consecutive pairs for the same patient
-    #   If days between previous discharge and current admission <= window_days:
-    #       append a flag dict
-    #   return flags
-    raise NotImplementedError("TODO: Implement detect_readmissions()")
+    flags = []
+
+    sorted_visits = sorted(
+        visits,
+        key=lambda v: (v["patient_id"], v["admission_date"]),
+    )
+
+    for i in range(1, len(sorted_visits)):
+        prev = sorted_visits[i - 1]
+        curr = sorted_visits[i]
+
+        if prev["patient_id"] != curr["patient_id"]:
+            continue
+
+        prev_discharge = prev.get("discharge_date")
+        curr_admission = curr.get("admission_date")
+
+        if prev_discharge is None or curr_admission is None:
+            continue
+
+        days_between = (curr_admission - prev_discharge).days
+
+        if 0 <= days_between <= window_days:
+            flags.append(
+                {
+                    "patient_id": curr["patient_id"],
+                    "original_visit_id": prev["visit_id"],
+                    "readmission_visit_id": curr["visit_id"],
+                    "days_between": days_between,
+                    "department": curr["department"],
+                }
+            )
+
+    return flags
 
 
 def calculate_avg_stay(
@@ -249,18 +273,35 @@ def readmission_flags(
     DE: Patienten markieren, die innerhalb eines konfigurierbaren Zeitfensters
     (Standard 30 Tage) wieder aufgenommen wurden. Dieses Asset haengt von raw_visits ab.
     """
-    # TODO: Implement this asset (Task 3)
-    # TODO (DE): Implementiere dieses Asset (Aufgabe 3)
-    # Hint:
-    #   visits = postgres.execute_query(
-    #       "SELECT visit_id, patient_id, department, admission_date, "
-    #       "discharge_date FROM visits WHERE status = 'completed' "
-    #       "ORDER BY patient_id, admission_date"
-    #   )
-    #   Convert rows to list of dicts
-    #   flags = detect_readmissions(visit_dicts, window_days=30)
-    #   Insert flags into readmission_flags table
-    raise NotImplementedError("TODO: Implement readmission_flags asset")
+    visits = postgres.execute_query(
+        """
+        SELECT visit_id, patient_id, department, admission_date, discharge_date
+        FROM visits
+        WHERE status = 'completed'
+        ORDER BY patient_id, admission_date
+        """
+    )
+
+    visit_dicts = [
+        {
+            "visit_id": row[0],
+            "patient_id": row[1],
+            "department": row[2],
+            "admission_date": row[3],
+            "discharge_date": row[4],
+        }
+        for row in visits
+    ]
+
+    flags = detect_readmissions(visit_dicts, window_days=30)
+
+    flag_count = 0
+    if flags:
+        flag_count = postgres.load_rows(flags, "readmission_flags")
+
+    context.log.info(f"Loaded {flag_count} readmission flags")
+
+    return dg.MaterializeResult(metadata={"flag_count": flag_count})
 
 
 # ---------------------------------------------------------------------------
