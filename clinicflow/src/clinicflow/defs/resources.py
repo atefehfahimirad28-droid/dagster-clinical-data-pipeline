@@ -7,15 +7,9 @@ German: PostgreSQL-Ressource fuer die klinische Analyse-Pipeline der Charite.
 Stellt Datenbankverbindungen fuer alle Pipeline-Assets bereit.
 """
 
-import os
-
 import dagster as dg
 import psycopg2
 from psycopg2 import sql
-
-_DEFAULT_CONNECTION_STRING = (
-    "postgresql://clinicflow:clinicflow@localhost:5432/clinicflow"
-)
 
 
 class PostgresResource(dg.ConfigurableResource):
@@ -24,12 +18,12 @@ class PostgresResource(dg.ConfigurableResource):
     Attributes:
         connection_string: PostgreSQL connection string in the format
             postgresql://user:password@host:port/database.
-            Defaults to DATABASE_URL env var, falling back to local dev credentials.
+            Configured via DATABASE_URL env var in Definitions.
 
     DE: Eine konfigurierbare Ressource, die PostgreSQL-Verbindungen verwaltet.
     """
 
-    connection_string: str = os.environ.get("DATABASE_URL", _DEFAULT_CONNECTION_STRING)
+    connection_string: str
 
     def get_connection(self):
         """Return a new psycopg2 connection to the configured database.

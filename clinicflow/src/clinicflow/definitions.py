@@ -1,6 +1,6 @@
 """Dagster definitions entry point for Charite Clinical Analytics Pipeline."""
 
-from dagster import Definitions
+import dagster as dg
 
 from clinicflow.defs.assets import (
     department_metrics,
@@ -15,7 +15,7 @@ from clinicflow.defs.jobs import readmission_screening_job, weekly_analytics_job
 from clinicflow.defs.resources import PostgresResource
 from clinicflow.defs.schedules import weekly_analytics_schedule
 
-defs = Definitions(
+defs = dg.Definitions(
     assets=[
         raw_patients,
         raw_visits,
@@ -27,5 +27,9 @@ defs = Definitions(
     ],
     jobs=[weekly_analytics_job, readmission_screening_job],
     schedules=[weekly_analytics_schedule],
-    resources={"postgres": PostgresResource()},
+    resources={
+        "postgres": PostgresResource(
+            connection_string=dg.EnvVar("DATABASE_URL"),
+        ),
+    },
 )
