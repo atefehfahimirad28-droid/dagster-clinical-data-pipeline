@@ -21,7 +21,7 @@ Asset-Graphen zu erstellen. Alle Daten sind synthetisch/fiktiv.
 Es werden keine echten Patientendaten (PHI) verwendet.
 """
 
-import csv  # noqa: F401 -- used by students when implementing TODO stubs
+import csv
 from collections import defaultdict
 from datetime import datetime
 from pathlib import Path
