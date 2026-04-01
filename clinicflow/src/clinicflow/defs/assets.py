@@ -588,13 +588,21 @@ def department_metrics(
         count = postgres.load_rows(metrics, "department_metrics")
         context.log.info(f"✅ Created metrics for {count} departments")
 
-        context.log.info(f"📊 Department Performance Summary (Period: {reporting_period}):")
-        for metric in sorted(metrics, key=lambda x: x["readmission_rate"], reverse=True)[:5]:
+        context.log.info(
+            f"📊 Department Performance Summary (Period: {reporting_period}):"
+        )
+        for metric in sorted(
+            metrics, key=lambda x: x["readmission_rate"], reverse=True
+        )[:5]:
             context.log.info(f"   └─ {metric['department']}:")
             context.log.info(f"      ├─ Admissions: {metric['total_admissions']}")
             context.log.info(f"      ├─ Avg Stay: {metric['avg_stay_days']} days")
-            context.log.info(f"      ├─ Readmission Rate: {metric['readmission_rate']*100:.1f}%")
-            context.log.info(f"      └─ Top Diagnosis: {metric['top_diagnosis_code'] or 'N/A'}")
+            context.log.info(
+                f"      ├─ Readmission Rate: {metric['readmission_rate'] * 100:.1f}%"
+            )
+            context.log.info(
+                f"      └─ Top Diagnosis: {metric['top_diagnosis_code'] or 'N/A'}"
+            )
     else:
         count = 0
         context.log.warning("⚠️  No department metrics generated")
