@@ -299,6 +299,7 @@ def readmission_flags(
 
     flags = detect_readmissions(visit_dicts, window_days=30)
 
+    postgres.execute_query("TRUNCATE TABLE readmission_flags CASCADE")
     flag_count = 0
     if flags:
         flag_count = postgres.load_rows(flags, "readmission_flags")
@@ -374,6 +375,10 @@ def patient_summaries(
             f"⚠️  {len(readmission_patients)} patients have readmission flags"
         )
 
+    patient_prescriptions = defaultdict(list)
+    for presc in prescriptions:
+        patient_prescriptions[presc[0]].append(presc[1])
+
     patient_visits = defaultdict(list)
     for visit in visits:
         patient_id = visit[0]
@@ -414,12 +419,11 @@ def patient_summaries(
             stay_days.append(stay)
         avg_stay = sum(stay_days) / len(stay_days) if stay_days else 0.0
 
-        active_count = 0
-        for presc in prescriptions:
-            if presc[0] == patient_id:
-                end_date = presc[1]
-                if end_date is None or end_date > datetime.now().date():
-                    active_count += 1
+        active_count = sum(
+            1
+            for end_date in patient_prescriptions.get(patient_id, [])
+            if end_date is None or end_date > datetime.now().date()
+        )
 
         if total_visits >= 5 or patient_id in readmission_patients:
             risk_category = "high"
@@ -547,7 +551,7 @@ def department_metrics(
         dept_stats[department]["readmissions"] += 1
 
     metrics = []
-    reporting_period = datetime.now().strftime("%Y-%m")
+    reporting_period = "all-time"
 
     context.log.info(f"📊 Computing KPIs for {len(dept_stats)} departments...")
 
