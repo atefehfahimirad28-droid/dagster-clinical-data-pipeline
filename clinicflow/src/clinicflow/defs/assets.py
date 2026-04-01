@@ -55,7 +55,10 @@ def _load_raw_data(
     """
     file_path = DATA_DIR / f"{name}.csv"
     with open(file_path, newline="") as f:
-        rows = list(csv.DictReader(f))
+        rows = [
+            {k: (v if v != "" else None) for k, v in row.items()}
+            for row in csv.DictReader(f)
+        ]
     count = postgres.load_rows(rows, name)
     context.log.info(f"Loaded {count} {name}")
     return dg.MaterializeResult(metadata={"row_count": count})
