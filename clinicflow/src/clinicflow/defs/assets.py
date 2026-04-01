@@ -130,15 +130,11 @@ def raw_patients(
 
     DE: Laedt patients.csv in die Patienten-Tabelle.
     """
-    # TODO: Implement this asset (Task 2)
-    # TODO (DE): Implementiere dieses Asset (Aufgabe 2)
-    # Hint:
-    #   with open(DATA_DIR / "patients.csv", newline="") as f:
-    #       rows = list(csv.DictReader(f))
-    #   count = postgres.load_rows(rows, "patients")
-    #   context.log.info(f"Loaded {count} patients")
-    #   return dg.MaterializeResult(metadata={"row_count": count})
-    raise NotImplementedError("TODO: Implement raw_patients asset")
+    with open(DATA_DIR / "patients.csv", newline="") as f:
+        rows = list(csv.DictReader(f))
+    count = postgres.load_rows(rows, "patients")
+    context.log.info(f"Loaded {count} patients")
+    return dg.MaterializeResult(metadata={"row_count": count})
 
 
 @dg.asset(
@@ -158,9 +154,11 @@ def raw_visits(
 
     DE: Laedt visits.csv in die Besuche-Tabelle.
     """
-    # TODO: Implement this asset (Task 2)
-    # TODO (DE): Implementiere dieses Asset (Aufgabe 2)
-    raise NotImplementedError("TODO: Implement raw_visits asset")
+    with open(DATA_DIR / "visits.csv", newline="") as f:
+        rows = list(csv.DictReader(f))
+    count = postgres.load_rows(rows, "visits")
+    context.log.info(f"Loaded {count} visits")
+    return dg.MaterializeResult(metadata={"row_count": count})
 
 
 @dg.asset(
@@ -180,9 +178,11 @@ def raw_diagnoses(
 
     DE: Laedt diagnoses.csv in die Diagnose-Tabelle.
     """
-    # TODO: Implement this asset (Task 2)
-    # TODO (DE): Implementiere dieses Asset (Aufgabe 2)
-    raise NotImplementedError("TODO: Implement raw_diagnoses asset")
+    with open(DATA_DIR / "diagnoses.csv", newline="") as f:
+        rows = list(csv.DictReader(f))
+    count = postgres.load_rows(rows, "diagnoses")
+    context.log.info(f"Loaded {count} diagnoses")
+    return dg.MaterializeResult(metadata={"row_count": count})
 
 
 @dg.asset(
@@ -202,9 +202,11 @@ def raw_prescriptions(
 
     DE: Laedt prescriptions.csv in die Verschreibungs-Tabelle.
     """
-    # TODO: Implement this asset (Task 2)
-    # TODO (DE): Implementiere dieses Asset (Aufgabe 2)
-    raise NotImplementedError("TODO: Implement raw_prescriptions asset")
+    with open(DATA_DIR / "prescriptions.csv", newline="") as f:
+        rows = list(csv.DictReader(f))
+    count = postgres.load_rows(rows, "prescriptions")
+    context.log.info(f"Loaded {count} prescriptions")
+    return dg.MaterializeResult(metadata={"row_count": count})
 
 
 # ---------------------------------------------------------------------------
