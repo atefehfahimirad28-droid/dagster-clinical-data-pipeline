@@ -24,6 +24,7 @@ Es werden keine echten Patientendaten (PHI) verwendet.
 import csv  # noqa: F401 -- used by students when implementing TODO stubs
 from datetime import datetime
 from pathlib import Path
+from collections import defaultdict
 
 import dagster as dg
 
@@ -151,9 +152,13 @@ def calculate_avg_stay(
     Gibt die Anzahl der Tage als Float zurueck (Entlassung - Aufnahme).days.
     Gibt 0.0 zurueck, wenn das Entlassungsdatum None oder vor dem Aufnahmedatum liegt.
     """
-    # TODO: Implement this function (Task 4)
-    # TODO (DE): Implementiere diese Funktion (Aufgabe 4)
-    raise NotImplementedError("TODO: Implement calculate_avg_stay()")
+    if discharge_date is None:
+        return 0.0
+
+    if discharge_date < admission_date:
+        return 0.0
+
+    return float((discharge_date - admission_date).days)
 
 
 # ---------------------------------------------------------------------------
@@ -346,9 +351,113 @@ def patient_summaries(
     Hauptabteilung, durchschnittliche Aufenthaltsdauer, aktive Verschreibungen
     und Risikokategorie.
     """
-    # TODO: Implement this asset (Task 4)
-    # TODO (DE): Implementiere dieses Asset (Aufgabe 4)
-    raise NotImplementedError("TODO: Implement patient_summaries asset")
+    context.log.info("📊 Generating patient summary analytics...")
+
+    patients = postgres.execute_query("SELECT patient_id FROM patients")
+    context.log.info(f"👥 Processing {len(patients)} patients")
+
+    visits = postgres.execute_query(
+        "SELECT patient_id, department, admission_date, discharge_date "
+        "FROM visits WHERE status = 'completed'"
+    )
+    context.log.info(f"📋 Retrieved {len(visits)} visit records")
+
+    prescriptions = postgres.execute_query(
+        "SELECT patient_id, end_date FROM prescriptions"
+    )
+    context.log.info(f"💊 Retrieved {len(prescriptions)} prescription records")
+
+    readmissions = postgres.execute_query(
+        "SELECT patient_id FROM readmission_flags"
+    )
+
+    readmission_patients = {row[0] for row in readmissions}
+    if readmission_patients:
+        context.log.info(f"⚠️  {len(readmission_patients)} patients have readmission flags")
+
+    patient_visits = defaultdict(list)
+    for visit in visits:
+        patient_id = visit[0]
+        patient_visits[patient_id].append({
+            'department': visit[1],
+            'admission_date': visit[2],
+            'discharge_date': visit[3]
+        })
+
+    summaries = []
+    risk_distribution = defaultdict(int)
+
+    for patient_row in patients:
+        patient_id = patient_row[0]
+        visits_list = patient_visits.get(patient_id, [])
+
+        total_visits = len(visits_list)
+
+        if visits_list:
+            last_visit = max(v['admission_date'] for v in visits_list)
+            last_visit_date = last_visit
+        else:
+            last_visit_date = None
+
+        if visits_list:
+            dept_counts = defaultdict(int)
+            for v in visits_list:
+                dept_counts[v['department']] += 1
+            primary_department = max(dept_counts, key=dept_counts.get)
+        else:
+            primary_department = None
+
+        stay_days = []
+        for v in visits_list:
+            stay = calculate_avg_stay(v['admission_date'], v['discharge_date'])
+            stay_days.append(stay)
+        avg_stay = sum(stay_days) / len(stay_days) if stay_days else 0.0
+
+        active_count = 0
+        for presc in prescriptions:
+            if presc[0] == patient_id:
+                end_date = presc[1]
+                if end_date is None or end_date > datetime.now().date():
+                    active_count += 1
+
+        if total_visits >= 5 or patient_id in readmission_patients:
+            risk_category = 'high'
+        elif total_visits >= 3:
+            risk_category = 'medium'
+        else:
+            risk_category = 'low'
+
+        risk_distribution[risk_category] += 1
+
+        summaries.append({
+            'patient_id': patient_id,
+            'total_visits': total_visits,
+            'last_visit_date': last_visit_date,
+            'primary_department': primary_department,
+            'avg_stay_days': round(avg_stay, 2),
+            'active_prescriptions': active_count,
+            'risk_category': risk_category
+        })
+
+    if summaries:
+        count = postgres.load_rows(summaries, "patient_summaries")
+        context.log.info(f"✅ Created {count} patient summaries")
+
+        context.log.info(f"📊 Patient Risk Distribution:")
+        context.log.info(f"   └─ High risk: {risk_distribution['high']} patients")
+        context.log.info(f"   └─ Medium risk: {risk_distribution['medium']} patients")
+        context.log.info(f"   └─ Low risk: {risk_distribution['low']} patients")
+
+        avg_visits = sum(s['total_visits'] for s in summaries) / len(summaries)
+        avg_active_rx = sum(s['active_prescriptions'] for s in summaries) / len(summaries)
+        context.log.info(f"📈 Average Metrics:")
+        context.log.info(f"   └─ Visits per patient: {avg_visits:.1f}")
+        context.log.info(f"   └─ Active prescriptions per patient: {avg_active_rx:.1f}")
+    else:
+        count = 0
+        context.log.warning("⚠️  No patient summaries generated")
+
+    return dg.MaterializeResult(metadata={"patient_count": count})
 
 
 # ---------------------------------------------------------------------------
