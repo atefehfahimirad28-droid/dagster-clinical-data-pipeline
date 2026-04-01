@@ -36,6 +36,31 @@ from clinicflow.defs.resources import PostgresResource
 DATA_DIR = Path(__file__).resolve().parents[4] / "data"
 
 
+def _load_raw_data(
+    context: dg.AssetExecutionContext,
+    postgres: PostgresResource,
+    name: str,
+) -> dg.MaterializeResult:
+    """Helper function to load CSV data into PostgreSQL table.
+
+    Args:
+        context: Dagster execution context
+        postgres: PostgreSQL resource
+        name: Name of the CSV file (without extension) and table name
+
+    Returns:
+        MaterializeResult with row_count metadata
+
+    DE: Hilfsfunktion zum Laden von CSV-Daten in die PostgreSQL-Tabelle.
+    """
+    file_path = DATA_DIR / f"{name}.csv"
+    with open(file_path, newline="") as f:
+        rows = list(csv.DictReader(f))
+    count = postgres.load_rows(rows, name)
+    context.log.info(f"Loaded {count} {name}")
+    return dg.MaterializeResult(metadata={"row_count": count})
+
+
 # ---------------------------------------------------------------------------
 # Pure helper functions (tested independently)
 # DE: Reine Hilfsfunktionen (unabhaengig getestet)
@@ -130,11 +155,7 @@ def raw_patients(
 
     DE: Laedt patients.csv in die Patienten-Tabelle.
     """
-    with open(DATA_DIR / "patients.csv", newline="") as f:
-        rows = list(csv.DictReader(f))
-    count = postgres.load_rows(rows, "patients")
-    context.log.info(f"Loaded {count} patients")
-    return dg.MaterializeResult(metadata={"row_count": count})
+    return _load_raw_data(context, postgres, "patients")
 
 
 @dg.asset(
@@ -154,11 +175,7 @@ def raw_visits(
 
     DE: Laedt visits.csv in die Besuche-Tabelle.
     """
-    with open(DATA_DIR / "visits.csv", newline="") as f:
-        rows = list(csv.DictReader(f))
-    count = postgres.load_rows(rows, "visits")
-    context.log.info(f"Loaded {count} visits")
-    return dg.MaterializeResult(metadata={"row_count": count})
+    return _load_raw_data(context, postgres, "visits")
 
 
 @dg.asset(
@@ -178,11 +195,7 @@ def raw_diagnoses(
 
     DE: Laedt diagnoses.csv in die Diagnose-Tabelle.
     """
-    with open(DATA_DIR / "diagnoses.csv", newline="") as f:
-        rows = list(csv.DictReader(f))
-    count = postgres.load_rows(rows, "diagnoses")
-    context.log.info(f"Loaded {count} diagnoses")
-    return dg.MaterializeResult(metadata={"row_count": count})
+    return _load_raw_data(context, postgres, "diagnoses")
 
 
 @dg.asset(
@@ -202,11 +215,7 @@ def raw_prescriptions(
 
     DE: Laedt prescriptions.csv in die Verschreibungs-Tabelle.
     """
-    with open(DATA_DIR / "prescriptions.csv", newline="") as f:
-        rows = list(csv.DictReader(f))
-    count = postgres.load_rows(rows, "prescriptions")
-    context.log.info(f"Loaded {count} prescriptions")
-    return dg.MaterializeResult(metadata={"row_count": count})
+    return _load_raw_data(context, postgres, "prescriptions")
 
 
 # ---------------------------------------------------------------------------
