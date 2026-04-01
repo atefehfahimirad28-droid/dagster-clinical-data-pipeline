@@ -10,6 +10,8 @@ fuer alle Pipeline-Assets bereitzustellen.
 """
 
 import dagster as dg
+import psycopg2
+from psycopg2 import sql
 
 
 class PostgresResource(dg.ConfigurableResource):
@@ -38,10 +40,7 @@ class PostgresResource(dg.ConfigurableResource):
 
         DE: Gibt eine neue psycopg2-Verbindung zur konfigurierten Datenbank zurueck.
         """
-        # TODO: Implement this method (Task 1)
-        # TODO (DE): Implementiere diese Methode (Aufgabe 1)
-        # Hint: return psycopg2.connect(self.connection_string)
-        raise NotImplementedError("TODO: Implement get_connection()")
+        return psycopg2.connect(self.connection_string)
 
     def execute_query(self, query: str, params: tuple | None = None) -> list:
         """Execute a SQL query and return results.
@@ -62,22 +61,18 @@ class PostgresResource(dg.ConfigurableResource):
 
         DE: Fuehrt eine SQL-Abfrage aus und gibt die Ergebnisse zurueck.
         """
-        # TODO: Implement this method (Task 1)
-        # TODO (DE): Implementiere diese Methode (Aufgabe 1)
-        # Hint:
-        #   conn = self.get_connection()
-        #   try:
-        #       cur = conn.cursor()
-        #       cur.execute(query, params)
-        #       if cur.description:  # SELECT query
-        #           results = cur.fetchall()
-        #       else:
-        #           results = []
-        #       conn.commit()
-        #       return results
-        #   finally:
-        #       conn.close()
-        raise NotImplementedError("TODO: Implement execute_query()")
+        conn = self.get_connection()
+        try:
+            cur = conn.cursor()
+            cur.execute(query, params)
+            if cur.description:  # SELECT query
+                results = cur.fetchall()
+            else:
+                results = []
+            conn.commit()
+            return results
+        finally:
+            conn.close()
 
     def load_rows(self, rows: list[dict], table_name: str) -> int:
         """Bulk-insert a list of dicts into the specified table.
@@ -100,24 +95,26 @@ class PostgresResource(dg.ConfigurableResource):
         DE: Fuegt eine Liste von Dicts per Masseneinfuegung in die
         angegebene Tabelle ein.
         """
-        # TODO: Implement this method (Task 1)
-        # TODO (DE): Implementiere diese Methode (Aufgabe 1)
-        # Hint:
-        #   conn = self.get_connection()
-        #   try:
-        #       cur = conn.cursor()
-        #       cur.execute(f"TRUNCATE TABLE {table_name} CASCADE")
-        #       cols = list(rows[0].keys())
-        #       col_str = ", ".join(cols)
-        #       placeholders = ", ".join(["%s"] * len(cols))
-        #       insert_sql = (
-        #           f"INSERT INTO {table_name} ({col_str}) "
-        #           f"VALUES ({placeholders})"
-        #       )
-        #       values = [tuple(row[c] for c in cols) for row in rows]
-        #       cur.executemany(insert_sql, values)
-        #       conn.commit()
-        #       return len(values)
-        #   finally:
-        #       conn.close()
-        raise NotImplementedError("TODO: Implement load_rows()")
+        if not rows:
+            return 0
+
+        conn = self.get_connection()
+        try:
+            with conn, conn.cursor() as cur:
+                # Use psycopg2.sql to safely handle identifiers
+                cur.execute(
+                    sql.SQL("TRUNCATE TABLE {} CASCADE").format(
+                        sql.Identifier(table_name)
+                    )
+                )
+                cols = list(rows[0].keys())
+                insert_sql = sql.SQL("INSERT INTO {} ({}) VALUES ({})").format(
+                    sql.Identifier(table_name),
+                    sql.SQL(", ").join(map(sql.Identifier, cols)),
+                    sql.SQL(", ").join([sql.Placeholder()] * len(cols)),
+                )
+                values = [tuple(row[c] for c in cols) for row in rows]
+                cur.executemany(insert_sql, values)
+                return len(values)
+        finally:
+            conn.close()
