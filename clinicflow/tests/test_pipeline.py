@@ -88,9 +88,15 @@ class TestPostgresResourceConfig:
             resource.connection_string == "postgresql://test:test@localhost:5432/testdb"
         )
 
-    def test_postgres_resource_default_config(self):
-        resource = PostgresResource()
-        assert "clinicflow" in resource.connection_string
+    def test_postgres_resource_requires_connection_string(self):
+        """connection_string is required (no hardcoded default)."""
+        import pydantic
+
+        try:
+            PostgresResource()
+            assert False, "Should require connection_string"
+        except pydantic.ValidationError:
+            pass
 
 
 # ---------------------------------------------------------------------------
