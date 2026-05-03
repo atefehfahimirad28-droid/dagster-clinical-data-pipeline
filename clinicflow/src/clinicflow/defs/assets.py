@@ -1,4 +1,3 @@
-
 """Dagster assets for the Charite Clinical Analytics Pipeline.
 
 Asset graph:
@@ -630,5 +629,3 @@ def department_metrics(
         context.log.warning("⚠️  No department metrics generated")
 
     return dg.MaterializeResult(metadata={"department_count": count})
-
-
