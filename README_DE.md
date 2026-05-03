@@ -1,78 +1,105 @@
-# Klinische Analyse-Pipeline (Dagster)
+# Klinische Analyse-Pipeline mit Dagster
+
+<hr>
 
 ## Überblick
 
-Produktionsähnliche Datenpipeline mit Dagster zur Verarbeitung **synthetischer klinischer Daten** und Erstellung wöchentlicher Analysen.
+Dieses Projekt ist eine produktionsähnliche Datenpipeline, die mit Dagster erstellt wurde.  
+Sie verarbeitet synthetische klinische Daten und erstellt wöchentliche Analyseergebnisse.
 
-Die Pipeline liest CSV-Exporte (Patienten, Besuche, Diagnosen, Rezepte), transformiert sie in analytische Datensätze und lädt die Ergebnisse in PostgreSQL für Reporting und Dashboards.
+Die Pipeline liest CSV-Dateien, lädt Rohdaten in PostgreSQL, transformiert die Daten und erzeugt:
 
-> Alle Daten sind synthetisch (fiktiv). Es werden keine echten Patientendaten (PHI) verwendet.
+- Patientenzusammenfassungen
+- Abteilungskennzahlen
+- Wiederaufnahme-Flags
 
----
+Alle Daten sind synthetisch (fiktiv). Es werden keine echten Patientendaten (PHI) verwendet.
 
-## Ziel des Projekts
-
-* Orchestrierung von Datenpipelines mit Dagster (Asset-basiert)
-* End-to-End Pipeline (Ingestion → Transformation → Laden)
-* Aufbau analytischer Datenmodelle
-* Grundlagen von CI/CD (Linting, Formatting, Commit-Standards)
-* Teamarbeit mit Git
-
----
+<hr>
 
 ## Architektur
 
-**Ingestion (Rohdaten-Assets)**
+```mermaid
+flowchart LR
 
-* `raw_patients`
-* `raw_visits`
-* `raw_diagnoses`
-* `raw_prescriptions`
+    A[patients.csv] --> B[raw_patients]
+    C[visits.csv] --> D[raw_visits]
+    E[diagnoses.csv] --> F[raw_diagnoses]
+    G[prescriptions.csv] --> H[raw_prescriptions]
 
-**Transformationen**
+    B --> I[patient_summaries]
+    D --> I
+    H --> I
 
-* `patient_summaries`
-* `readmission_flags`
-* `department_metrics`
+    D --> J[readmission_flags]
 
-**Datenfluss**
+    D --> K[department_metrics]
+    F --> K
 
-```id="m9c7st"
-CSV → Dagster Assets → PostgreSQL
+    I --> L[(PostgreSQL)]
+    J --> L
+    K --> L
 ```
 
-Zeitplan:
+<hr>
 
-* Wöchentlicher Job (Montag, 07:00 Uhr)
+## Ergebnisse
 
----
+| Output             | Beschreibung                                    |
+| ------------------ | ----------------------------------------------- |
+| patient_summaries  | Patientenanalysen (Besuche, Dauer, Risiko)      |
+| department_metrics | Abteilungs-KPIs (Aufnahmen, Wiederaufnahmerate) |
+| readmission_flags  | Kennzeichnet wiederaufgenommene Patienten       |
+
+<hr>
 
 ## Technologien
 
-* Python
-* Dagster
-* PostgreSQL
-* Docker
-* Pytest
-* Ruff (Linting & Formatting)
+| Bereich        | Tools        |
+| -------------- | ------------ |
+| Sprache        | Python       |
+| Orchestrierung | Dagster      |
+| Datenbank      | PostgreSQL   |
+| Infrastruktur  | Docker       |
+| Tests          | Pytest       |
+| Code-Qualität  | Ruff         |
+| Versionierung  | Git & GitHub |
 
----
+<hr>
+
+## Projektstruktur
+
+```text
+.
+├── clinicflow/
+│   ├── src/clinicflow/defs/
+│   │   ├── assets.py
+│   │   ├── jobs.py
+│   │   ├── resources.py
+│   │   └── schedules.py
+│   └── tests/
+├── data/
+├── docker-compose.yml
+├── README.md
+```
+
+<hr>
 
 ## Mein Beitrag
 
-Dies war ein **Gruppenprojekt**. Meine Beiträge:
+Dies war ein Gruppenprojekt. Meine Beiträge:
 
-* Arbeit mit Dagster-Assets und Abhängigkeitsgraph
-* Unterstützung bei der Implementierung der Transformationen
-* Debugging der Pipeline und Tests
-* Behebung von CI-Problemen (Ruff, GitHub Actions)
-* Zusammenarbeit im Team mit Git (Commits, Merges, Workflow)
+- Arbeit mit Dagster-Assets und Abhängigkeiten
+- Unterstützung bei der Daten-Transformation
+- Debugging von Pipeline und Tests
+- Behebung von CI-Problemen (Ruff & GitHub Actions)
+- Zusammenarbeit mit Git
 
----
+<hr>
 
 ## Ausführung
 
-```bash id="o4r0ds"
+```bash
 docker compose up -d
 cd clinicflow
 uv sync
@@ -80,26 +107,15 @@ uv run pytest tests/ -v
 dg dev
 ```
 
-Dagster UI:
+Dagster UI:  
 http://localhost:3000
 
----
-
-## Ergebnisse
-
-* Patientenzusammenfassungen
-* Abteilungskennzahlen
-* Wiederaufnahme-Risikoindikatoren
-
----
-
-## Kontext
-
-Entwickelt im Rahmen einer Data-Engineering-Weiterbildung mit Fokus auf reale Pipeline-Architektur und Orchestrierung.
-
----
+<hr>
 
 ## Hinweis
 
-Die Referenz auf Charité – Universitätsmedizin Berlin dient ausschließlich als Lernkontext.
-Es werden keine echten Systeme oder Daten verwendet.
+Dieses Projekt dient ausschließlich zu Lernzwecken.  
+Alle Daten sind synthetisch und fiktiv.  
+Es werden keine echten Patientendaten verwendet.
+
+<hr>

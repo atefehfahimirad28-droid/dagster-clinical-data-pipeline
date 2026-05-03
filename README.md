@@ -1,74 +1,117 @@
-# Clinical Analytics Pipeline (Dagster)
+# Clinical Analytics Pipeline with Dagster
+
+<hr>
 
 ## Overview
 
-Production-style data pipeline built with Dagster to process **synthetic clinical data** and generate weekly analytics.
+This project is a production-style data engineering pipeline built with Dagster.  
+It processes synthetic clinical data and generates weekly analytics outputs.
 
-The system ingests CSV extracts (patients, visits, diagnoses, prescriptions), transforms them into analytical datasets, and loads results into PostgreSQL for reporting and dashboards.
+The pipeline reads CSV files, loads raw data into PostgreSQL, transforms the data, and produces:
 
-> All data is synthetic (fictional). No real patient data (PHI) is used.
+- patient summaries
+- department metrics
+- readmission flags
 
----
+All data is synthetic (fictional). No real patient data (PHI) is used.
 
-## What This Project Demonstrates
+<hr>
 
-* Asset-based data orchestration with Dagster
-* End-to-end pipeline design (ingest → transform → load)
-* Data modeling for analytics (patient summaries, KPIs)
-* CI/CD basics (linting, formatting, commit standards)
-* Team collaboration using Git workflows
+## Project Context
 
----
+This was a group project developed during a Data Engineering training program.
+
+The goal was to simulate a real-world clinical analytics pipeline using:
+
+- data ingestion
+- transformation
+- orchestration
+- testing
+- CI/CD
+
+The project references Charité – Universitätsmedizin Berlin only as a learning context.
+
+<hr>
 
 ## Architecture
 
-**Ingestion (raw assets)**
+```mermaid
+flowchart LR
 
-* `raw_patients`
-* `raw_visits`
-* `raw_diagnoses`
-* `raw_prescriptions`
+    A[patients.csv] --> B[raw_patients]
+    C[visits.csv] --> D[raw_visits]
+    E[diagnoses.csv] --> F[raw_diagnoses]
+    G[prescriptions.csv] --> H[raw_prescriptions]
 
-**Transformations**
+    B --> I[patient_summaries]
+    D --> I
+    H --> I
 
-* `patient_summaries`
-* `readmission_flags`
-* `department_metrics`
+    D --> J[readmission_flags]
 
-**Flow**
+    D --> K[department_metrics]
+    F --> K
 
+    I --> L[(PostgreSQL)]
+    J --> L
+    K --> L
 ```
-CSV → Dagster Assets → PostgreSQL
-```
 
-Scheduled execution:
+<hr>
 
-* Weekly analytics job (Monday 07:00)
+## Key Outputs
 
----
+| Output             | Description                                       |
+| ------------------ | ------------------------------------------------- |
+| patient_summaries  | Patient-level analytics (visits, duration, risk)  |
+| department_metrics | Department KPIs (admissions, readmission rate)    |
+| readmission_flags  | Identifies patients readmitted within time window |
+
+<hr>
 
 ## Tech Stack
 
-* Python
-* Dagster
-* PostgreSQL
-* Docker
-* Pytest
-* Ruff (lint & format)
+| Area            | Tools        |
+| --------------- | ------------ |
+| Language        | Python       |
+| Orchestration   | Dagster      |
+| Database        | PostgreSQL   |
+| Infrastructure  | Docker       |
+| Testing         | Pytest       |
+| Code Quality    | Ruff         |
+| Version Control | Git & GitHub |
 
----
+<hr>
+
+## Project Structure
+
+```text
+.
+├── clinicflow/
+│   ├── src/clinicflow/defs/
+│   │   ├── assets.py
+│   │   ├── jobs.py
+│   │   ├── resources.py
+│   │   └── schedules.py
+│   └── tests/
+├── data/
+├── docker-compose.yml
+├── README.md
+```
+
+<hr>
 
 ## My Contribution
 
-This was a **group project**. My contributions include:
+This was a group project. My contributions include:
 
-* Worked with Dagster asset graph and dependencies
-* Contributed to transformation logic and pipeline flow
-* Debugged pipeline execution and test failures
-* Fixed CI issues (formatting, GitHub Actions)
-* Collaborated using Git (commits, merges, workflow)
+- Working with Dagster assets and dependencies
+- Supporting data transformation logic
+- Debugging pipeline and tests
+- Fixing CI issues (Ruff & GitHub Actions)
+- Collaborating using Git
 
----
+<hr>
 
 ## How to Run
 
@@ -80,27 +123,15 @@ uv run pytest tests/ -v
 dg dev
 ```
 
-Open Dagster UI:
+Dagster UI:  
 http://localhost:3000
 
----
-
-## Key Outputs
-
-* Patient-level summaries
-* Department performance metrics
-* Readmission risk flags
-
----
-
-## Project Context
-
-Developed as part of a data engineering training program.
-Focus: real-world pipeline structure, orchestration, and testing.
-
----
+<hr>
 
 ## Disclaimer
 
-This project references Charité – Universitätsmedizin Berlin for learning context only.
-No real systems or data are used.
+This project is for educational purposes.  
+All data is synthetic and fictional.  
+No real patient data is used.
+
+<hr>
